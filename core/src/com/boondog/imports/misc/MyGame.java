@@ -13,7 +13,7 @@ public abstract class MyGame extends Game {
 	public static Preferences prefs;
 	public Assets assets;
 	
-	public MyGame() {
+	public void init() {
 		batch = new SpriteBatch();
 		prefs = Gdx.app.getPreferences("main");
 		assets = new Assets();
@@ -21,8 +21,8 @@ public abstract class MyGame extends Game {
 		initAssets();
 	}
 	
-	abstract void initViewport();
-	abstract void initAssets();
+	protected abstract void initViewport();
+	protected abstract void initAssets();
 	
 	protected void setViewport(float minX, float minY, float maxX, float maxY) {		
 		// Here, I should allow small modifications of the world width/height.
