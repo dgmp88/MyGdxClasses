@@ -62,8 +62,10 @@ project(":android") {
 
 project(":core") {
     apply plugin: "java"
+	apply plugin: "maven"
 
-
+	version = "0.1.0-SNAPSHOT"
+	group = "com.boondog.imports"
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
