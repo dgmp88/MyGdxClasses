@@ -6,6 +6,7 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.boondog.imports.io.Assets;
 
 public abstract class MyGame extends Game {
 	public static SpriteBatch batch;
@@ -18,11 +19,9 @@ public abstract class MyGame extends Game {
 		prefs = Gdx.app.getPreferences("main");
 		assets = new Assets();
 		initViewport();
-		initAssets();
 	}
 	
 	protected abstract void initViewport();
-	protected abstract void initAssets();
 	
 	protected void setViewport(float minX, float minY, float maxX, float maxY) {		
 		// Here, I should allow small modifications of the world width/height.
