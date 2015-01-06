@@ -3,6 +3,7 @@ package com.boondog.imports.misc;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -29,5 +30,12 @@ public abstract class MyGame extends Game {
 		viewport = new ExtendViewport(minX,minY,maxX,maxY);
 		viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(),true);
 		System.out.println(viewport.getWorldWidth() + "x" + viewport.getWorldHeight());
+	}
+	
+	public void changeScreen(Screen screen){
+		Screen oldScreen = getScreen();
+		setScreen(screen);
+		oldScreen.dispose();
+		oldScreen = null;
 	}
 }
