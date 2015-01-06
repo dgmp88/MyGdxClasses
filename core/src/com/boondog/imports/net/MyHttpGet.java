@@ -10,9 +10,13 @@ public class MyHttpGet {
 	// A get request. It is its own class. It has variables that change whenever the request is finished.
 	public String returnString, url;
 	public boolean done, worked;
+
+	private long timeOfRequest;
+	
 	public MyHttpGet(String url) {	
 		// New request 
 		HttpRequest request = new HttpRequest(HttpMethods.GET);
+		timeOfRequest = System.currentTimeMillis();
 		this.url = url;
 		// Set the URL
 		request.setUrl(url);
@@ -38,4 +42,7 @@ public class MyHttpGet {
 		});	
 	}
 	
+	public float getTimeTaken() {
+		return (System.currentTimeMillis()-timeOfRequest)/1000f;
+	}
 }
