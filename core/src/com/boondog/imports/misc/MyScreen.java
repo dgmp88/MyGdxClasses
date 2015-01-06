@@ -1,6 +1,5 @@
 package com.boondog.imports.misc;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -10,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.boondog.imports.io.Assets;
 
 public abstract class MyScreen implements Screen {	
-	public Game app;
+	public MyGame app;
 	
 	protected SpriteBatch batch = MyGame.batch;
 	protected float worldWidth = MyGame.viewport.getWorldWidth(), worldHeight = MyGame.viewport.getWorldHeight();
@@ -52,5 +51,22 @@ public abstract class MyScreen implements Screen {
 	public void clearColor() {
 		Gdx.gl.glClearColor(backgroundColor.r, backgroundColor.b, backgroundColor.g, backgroundColor.a);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+	}
+	
+	public Stage getStage() {
+		return stage;
+	}
+	
+	public Assets getAssets() {
+		return assets;
+	}
+	
+	public float getWorldWidth() {
+		return MyGame.viewport.getWorldWidth();
+	}
+	
+	
+	public float getWorldHeight() {
+		return MyGame.viewport.getWorldHeight();
 	}
 }
