@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.boondog.imports.io.Assets;
 
 public abstract class MyScreen implements Screen {	
 	public Game app;
@@ -15,7 +16,7 @@ public abstract class MyScreen implements Screen {
 	protected float worldWidth = MyGame.viewport.getWorldWidth(), worldHeight = MyGame.viewport.getWorldHeight();
 	protected Stage stage = new Stage(MyGame.viewport, MyGame.batch);
 	protected Assets assets;
-	protected Color backgroundColor;
+	protected Color backgroundColor = new Color(1,1,1,1);
 	
 	public MyScreen(MyGame app) {
 		this.app = app;
