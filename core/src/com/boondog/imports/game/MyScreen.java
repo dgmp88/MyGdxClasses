@@ -1,4 +1,4 @@
-package com.boondog.imports.misc;
+package com.boondog.imports.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
