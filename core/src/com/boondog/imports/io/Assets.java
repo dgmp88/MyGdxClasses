@@ -1,6 +1,8 @@
 package com.boondog.imports.io;
 
 
+import java.util.HashMap;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
@@ -13,8 +15,8 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class Assets {
-	public AssetManager manager = new AssetManager();
-	BitmapFont font;
+	AssetManager manager = new AssetManager();
+	HashMap<String,BitmapFont> fonts = new HashMap<String, BitmapFont>();
 	
 	private static final String atlasDir = "atlas/";
 
@@ -46,23 +48,26 @@ public class Assets {
 		return new Skin(getAtlas(string));
 	}
 	
-	public void loadFonts() {
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Orbitron-Bold.ttf"));
+	public void loadFont(String fontName, int size) {
+		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(fontName));
 		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 		parameter.genMipMaps = true;
 		parameter.minFilter = TextureFilter.MipMapLinearLinear;
 		parameter.magFilter = TextureFilter.Linear;
 		
 		// Make them too big, then minify. This helps for some reason...
-		parameter.size = 70; // was 135
-		font = generator.generateFont(parameter);
+		parameter.size = size; // was 135
+		BitmapFont font = generator.generateFont(parameter);
 		generator.dispose(); // don't forget to dispose to avoid memory leaks!
+		fonts.put(fontName+size, font);
 	}
 	
-	public BitmapFont getFont() {
-		return font;
+	public BitmapFont getFont(String fontName, int size) {
+		if (!(fonts.containsKey(fontName+size))) {
+			loadFont(fontName,size);
+		}
+		return fonts.get(fontName+size);
 	}
-	
 	
 	/*
 	 *  It seems there is a bug in how sounds are unloaded by the AssetManager.
@@ -84,4 +89,7 @@ public class Assets {
 		manager.unload(atlasDir + string + ".atlas");
 	}
 	
+	public AssetManager getManager() {
+		return manager;
+	}
 }

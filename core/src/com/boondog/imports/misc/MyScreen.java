@@ -11,15 +11,15 @@ import com.boondog.imports.io.Assets;
 public abstract class MyScreen implements Screen {	
 	public MyGame app;
 	
-	protected SpriteBatch batch = MyGame.batch;
-	protected float worldWidth = MyGame.viewport.getWorldWidth(), worldHeight = MyGame.viewport.getWorldHeight();
-	protected Stage stage = new Stage(MyGame.viewport, MyGame.batch);
+	protected SpriteBatch batch = MyGame.getBatch();
+	protected float worldWidth = MyGame.getViewport().getWorldWidth(), worldHeight = MyGame.getViewport().getWorldHeight();
+	protected Stage stage = new Stage(MyGame.getViewport(), MyGame.getBatch());
 	protected Assets assets;
 	protected Color backgroundColor = new Color(1,1,1,1);
 	
 	public MyScreen(MyGame app) {
 		this.app = app;
-		this.assets = app.assets;
+		this.assets = app.getAssets();
 	}
 	
 	@Override
@@ -34,7 +34,7 @@ public abstract class MyScreen implements Screen {
 	
 	@Override
 	public void resize(int width, int height) {
-		MyGame.viewport.update(width, height);
+		MyGame.getViewport().update(width, height);
 	}
 	
 	@Override
@@ -62,11 +62,11 @@ public abstract class MyScreen implements Screen {
 	}
 	
 	public float getWorldWidth() {
-		return MyGame.viewport.getWorldWidth();
+		return MyGame.getViewport().getWorldWidth();
 	}
 	
 	
 	public float getWorldHeight() {
-		return MyGame.viewport.getWorldHeight();
+		return MyGame.getViewport().getWorldHeight();
 	}
 }

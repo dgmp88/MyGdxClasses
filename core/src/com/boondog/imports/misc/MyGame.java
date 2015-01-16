@@ -10,10 +10,10 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.boondog.imports.io.Assets;
 
 public abstract class MyGame extends Game {
-	public static SpriteBatch batch;
-	public static Viewport viewport;
-	public static Preferences prefs;
-	public Assets assets;
+	private static SpriteBatch batch;
+	private static Viewport viewport;
+	private static Preferences prefs;
+	private Assets assets;
 	
 	public void init() {
 		batch = new SpriteBatch();
@@ -38,4 +38,22 @@ public abstract class MyGame extends Game {
 		oldScreen.dispose();
 		oldScreen = null;
 	}
+
+	public static SpriteBatch getBatch() {
+		return batch;
+	}
+
+	public static Viewport getViewport() {
+		return viewport;
+	}
+
+	public static Preferences getPrefs() {
+		return prefs;
+	}
+
+	public Assets getAssets() {
+		return assets;
+	}
+
+	
 }
