@@ -5,11 +5,13 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.boondog.imports.io.Assets;
 
 public abstract class MyScreen implements Screen {	
-	public MyGame app;
+	protected MyGame app;
 	
 	protected SpriteBatch batch = MyGame.getBatch();
 	protected float worldWidth = MyGame.getViewport().getWorldWidth(), worldHeight = MyGame.getViewport().getWorldHeight();
@@ -68,5 +70,21 @@ public abstract class MyScreen implements Screen {
 	
 	public float getWorldHeight() {
 		return MyGame.getViewport().getWorldHeight();
+	}
+	
+	public static Viewport getViewport() {
+		return MyGame.getViewport();
+	}
+	
+	public static Matrix4 getProjMatrix() {
+		return getViewport().getCamera().combined;
+	}
+	
+	public void changeScreen(MyScreen newScreen) {
+		app.changeScreen(newScreen);
+	}
+	
+	public MyGame getApp() {
+		return app;
 	}
 }
