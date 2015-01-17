@@ -51,7 +51,7 @@ public abstract class MyScreen implements Screen {
 	}
 	
 	public void clearColor() {
-		Gdx.gl.glClearColor(backgroundColor.r, backgroundColor.b, backgroundColor.g, backgroundColor.a);
+		Gdx.gl.glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 	}
 	
