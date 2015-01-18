@@ -1,6 +1,7 @@
 package com.boondog.imports.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -18,6 +19,7 @@ public abstract class MyScreen implements Screen {
 	protected Stage stage = new Stage(MyGame.getViewport(), MyGame.getBatch());
 	protected Assets assets;
 	protected Color backgroundColor = new Color(1,1,1,1);
+	protected InputMultiplexer inputs;
 	
 	public MyScreen(MyGame app) {
 		this.app = app;
@@ -26,7 +28,11 @@ public abstract class MyScreen implements Screen {
 	
 	@Override
 	public void show() {
-		Gdx.input.setInputProcessor(stage);		
+		if (inputs!= null) {
+			Gdx.input.setInputProcessor(inputs);
+		} else {
+			Gdx.input.setInputProcessor(stage);		
+		}
 	}
 	
 	@Override
@@ -86,5 +92,14 @@ public abstract class MyScreen implements Screen {
 	
 	public MyGame getApp() {
 		return app;
+	}
+
+	public void reset() {} // Used for the debug mode;
+	
+	public void setDebugMode() {
+		inputs = new InputMultiplexer();
+		inputs.addProcessor(stage);
+		inputs.addProcessor(new DebugInputProcessor(this));
+		Gdx.input.setInputProcessor(inputs);
 	}
 }
