@@ -47,6 +47,7 @@ public abstract class MyGame extends Game {
 	}
 
 	public static SpriteBatch getBatch() {
+		batch.setProjectionMatrix(viewport.getCamera().combined);
 		return batch;
 	}
 
