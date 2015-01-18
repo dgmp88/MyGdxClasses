@@ -23,8 +23,8 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
  * 
  * @author george, most of the heavy lifting by mattdesl
  * Derived from
- * @see https://github.com/mattdesl/lwjgl-basics/wiki/LibGDX-Meshes-Lesson-1
- * @see https://gist.github.com/mattdesl/5793041
+ * https://github.com/mattdesl/lwjgl-basics/wiki/LibGDX-Meshes-Lesson-1
+ * https://gist.github.com/mattdesl/5793041
  */
 public class MyShapeRenderer implements Disposable {
 	Mesh mesh;
