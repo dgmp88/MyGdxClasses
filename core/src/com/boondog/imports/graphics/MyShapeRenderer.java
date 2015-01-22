@@ -201,12 +201,11 @@ public class MyShapeRenderer implements Disposable {
 		norm.set(b);
 		norm.sub(a);
 		norm.rotate(90);
-		norm.nor(); // Set to 1
-		norm.scl(width/2); // Scale to line width
-
+		norm.setLength(width/2); // Scale to line width
+				
 		// Calculate the normal that defines feathering
-		feath.set(norm).nor();
-		feath.scl(feather/2);
+		feath.set(norm);
+		feath.setLength(feather/2);
 
 		// ORDER OF RENDERING
 		
