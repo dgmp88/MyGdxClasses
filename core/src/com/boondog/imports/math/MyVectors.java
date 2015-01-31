@@ -117,4 +117,17 @@ public class MyVectors {
 		}
 		return max;
 	}
+	
+	public static void rotate(Array<Vector2> vecs, Vector2 rotateAbout, float deg) {
+		for (Vector2 v : vecs) {
+			v = rotateAbout(v,rotateAbout,deg);
+		}
+	}
+	
+	private static Vector2 rotateAbout(Vector2 toRotate, Vector2 rotateAbout, float degrees) {
+		toRotate.sub(rotateAbout);
+		toRotate.rotate(degrees);
+		toRotate.add(rotateAbout);
+		return toRotate;
+	}
 }
