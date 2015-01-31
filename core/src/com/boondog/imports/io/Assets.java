@@ -17,31 +17,42 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 public class Assets {
 	AssetManager manager = new AssetManager();
 	HashMap<String,BitmapFont> fonts = new HashMap<String, BitmapFont>();
+	private static String baseDir = "";
+	private static String atlasDir = "atlas/";
+	private static String fullAtlasDir =  baseDir + atlasDir;
 	
-	private static final String atlasDir = "atlas/";
-
+	
+	private <T> void loadFull (String fileName, Class<T> type) {
+		try {
+			manager.load(fileName,type);
+			manager.finishLoading();
+		} catch (Exception e) {
+			System.out.println("Most likely, file doesn't exist: ");
+			System.out.println(Gdx.files.getLocalStoragePath() + fileName);
+			e.printStackTrace();
+		}		
+	}
+	
 	public void clearAtlas(String atlas) {
-		manager.unload(atlasDir + atlas + ".atlas");
+		manager.unload(fullAtlasDir + atlas + ".atlas");
 	}
 	
 	public TextureAtlas getAtlas(String atlas) {
-		if (!manager.isLoaded(atlasDir+atlas+".atlas")) {
-			manager.load(atlasDir+ atlas + ".atlas",TextureAtlas.class);
-			manager.finishLoading();
+		if (!manager.isLoaded(fullAtlasDir+atlas+".atlas")) {
+			loadFull(fullAtlasDir + atlas +".atlas",TextureAtlas.class);
 		}
-		return manager.get(atlasDir + atlas + ".atlas",TextureAtlas.class);
+		return manager.get(fullAtlasDir + atlas + ".atlas",TextureAtlas.class);
 	}
 	
 	public Texture getTexture(String texture) {
 		if (!manager.isLoaded(texture)) {
-			manager.load(texture,Texture.class);
-			manager.finishLoading();
+			loadFull(baseDir + texture,Texture.class);
 		}
-		return manager.get(texture,Texture.class);
+		return manager.get(baseDir + texture,Texture.class);
 	}
 	
 	public void clearTexture(String texture) {
-		manager.unload(texture);
+		manager.unload(baseDir + texture);
 	}
 	
 	public Skin getSkin(String string) {
@@ -49,14 +60,14 @@ public class Assets {
 	}
 	
 	public void loadFont(String fontName, int size) {
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(fontName));
+		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(baseDir + fontName));
 		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 		parameter.genMipMaps = true;
-		parameter.minFilter = TextureFilter.MipMapLinearLinear;
+		parameter.minFilter = TextureFilter.Linear;
 		parameter.magFilter = TextureFilter.Linear;
 		
 		// Make them too big, then minify. This helps for some reason...
-		parameter.size = size; // was 135
+		parameter.size = size;
 		BitmapFont font = generator.generateFont(parameter);
 		generator.dispose(); // don't forget to dispose to avoid memory leaks!
 		fonts.put(fontName+size, font);
@@ -78,18 +89,27 @@ public class Assets {
 	
 
 	public Sound getSound(String sound) {
-		if (!manager.isLoaded(sound)) {
-			manager.load(sound, Sound.class);
+		if (!manager.isLoaded(baseDir + sound)) {
+			manager.load(baseDir + sound, Sound.class);
 			manager.finishLoading();
 		}
-		return manager.get(sound);
+		return manager.get(baseDir + sound);
 	}
 
 	public void unloadAtlas(String string) {
-		manager.unload(atlasDir + string + ".atlas");
+		manager.unload(fullAtlasDir + string + ".atlas");
 	}
 	
 	public AssetManager getManager() {
 		return manager;
+	}
+	
+	public static void setAtlasDir(String string){
+		atlasDir = string;
+		fullAtlasDir = baseDir + atlasDir;
+	}
+	
+	public static void setBaseDir(String string) {
+		baseDir = string;
 	}
 }
