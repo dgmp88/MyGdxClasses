@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.boondog.imports.io.Assets;
@@ -63,5 +64,7 @@ public abstract class MyGame extends Game {
 		return assets;
 	}
 
-	
+	public static Matrix4 getProjMat() {
+		return getViewport().getCamera().combined;
+	}
 }
