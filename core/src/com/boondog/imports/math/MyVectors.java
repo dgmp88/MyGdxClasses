@@ -125,9 +125,10 @@ public class MyVectors {
 	}
 	
 	private static Vector2 rotateAbout(Vector2 toRotate, Vector2 rotateAbout, float degrees) {
-		toRotate.sub(rotateAbout);
+		tmp.set(rotateAbout);
+		toRotate.sub(tmp);
 		toRotate.rotate(degrees);
-		toRotate.add(rotateAbout);
+		toRotate.add(tmp);
 		return toRotate;
 	}
 }
