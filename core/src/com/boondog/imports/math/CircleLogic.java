@@ -9,8 +9,8 @@ public class CircleLogic {
 	public static Vector2 findPos(Vector2 center, float radius, float angle, float ellipse) {
 		// circular motion: ellipse == 0;
 		// straight motion: ellipse appriaching 0 or approaching Inf (Star s1 = new Star(solarSys, new Vector2(camX/2, 10), 180, 0.03f, 2f, 1000f);
-		v.x = (float) (radius * Math.cos(Math.toRadians(angle))) * (1+ellipse);
-		v.y = (float) (radius * Math.sin(Math.toRadians(angle))) * (1+(ellipse*-1));
+		v.x = (float) (radius * Math.sin(Math.toRadians(angle))) * (1+ellipse);
+		v.y = (float) (radius * Math.cos(Math.toRadians(angle))) * (1+(ellipse*-1));
 		v.add(center);
 		return v;
 	}
