@@ -7,16 +7,17 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.boondog.imports.io.Assets;
 
-public abstract class MyScreen implements Screen {	
+public abstract class MyScreen extends Group implements Screen  {	
 	protected MyGame app;
 	
 	protected SpriteBatch batch = MyGame.getBatch();
 	protected float worldWidth = MyGame.getViewport().getWorldWidth(), worldHeight = MyGame.getViewport().getWorldHeight();
-	protected Stage stage = new Stage(MyGame.getViewport(), MyGame.getBatch());
+	protected Stage stage = MyGame.getStage();
 	protected Assets assets;
 	protected Color backgroundColor = new Color(1,1,1,1);
 	protected InputMultiplexer inputs;
@@ -24,6 +25,8 @@ public abstract class MyScreen implements Screen {
 	public MyScreen(MyGame app) {
 		this.app = app;
 		this.assets = app.getAssets();
+		stage.clear();
+		stage.addActor(this);
 	}
 	
 	@Override
@@ -54,6 +57,12 @@ public abstract class MyScreen implements Screen {
 	@Override
 	public void resume() {
 		// TODO Auto-generated method stub
+	}
+	
+	@Override
+	public void dispose() {
+		clear();
+		stage.getRoot().removeActor(this);
 	}
 	
 	public void clearColor() {

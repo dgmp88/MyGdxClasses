@@ -16,6 +16,11 @@ public class BodyBuilderBody {
 	public BodyBuilderBody(Array<Vector2> vertices) {
 		this(vertices,null);
 	}
+	
+	public BodyBuilderBody() {
+		this(null,null);
+	}
+
 
 	public Array<Vector2> getVertices() {
 		return vertices;

@@ -6,6 +6,7 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.boondog.imports.io.Assets;
@@ -14,6 +15,7 @@ public abstract class MyGame extends Game {
 	private static SpriteBatch batch;
 	private static Viewport viewport;
 	private static Preferences prefs;
+	private static Stage stage;
 	private Assets assets;
 	
 	public void init() {
@@ -21,6 +23,7 @@ public abstract class MyGame extends Game {
 		prefs = Gdx.app.getPreferences("main");
 		assets = new Assets();
 		initViewport();
+		stage = new Stage(viewport,batch);
 	}
 	
 	protected abstract void initViewport();
@@ -66,5 +69,9 @@ public abstract class MyGame extends Game {
 
 	public static Matrix4 getProjMat() {
 		return getViewport().getCamera().combined;
+	}
+
+	public static Stage getStage() {
+		return stage;
 	}
 }
