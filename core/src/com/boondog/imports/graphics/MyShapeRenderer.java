@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.boondog.imports.math.CircleLogic;
 
 
 /**
@@ -71,6 +72,7 @@ public class MyShapeRenderer implements Disposable {
 	Vector2 norm = new Vector2(),feath = new Vector2();
 	Vector2 bL= new Vector2(), bR= new Vector2(), tL= new Vector2(), tR= new Vector2();
 
+	Color tmpCol = new Color();
 	
 	public MyShapeRenderer () {
 		mesh = new Mesh(true, MAX_VERTS, 0, 
@@ -423,6 +425,76 @@ public class MyShapeRenderer implements Disposable {
 		drawLine(c,right,width,feather,color);
 		flush();
 	}
-	
 
+
+	public void drawCircle(Vector2 center, float rad, int segs, Color col) {
+		if (segs < 3) {
+			throw new IllegalArgumentException("Segs must be > 3");
+		}
+		RENDER_TYPE = GL20.GL_TRIANGLE_FAN;
+		if (idx>0) {
+			flush();
+		}
+		putVertex(center.x,center.y,col);
+		for (int i = 0; i < segs+1; i++) {
+			a.set(CircleLogic.findPos(center, rad, i*(360f/segs), 0f));
+			putVertex(a.x,a.y,col);
+		}
+		flush();
+	}
+	
+	public void drawCircle(Vector2 center, float rad, float feath, int segs, Color col) {
+		if (segs < 3) {
+			throw new IllegalArgumentException("Segs must be > 3");
+		}
+		
+		if (rad == 0) {
+			return;
+		}
+		
+		drawCircle(center, rad, segs, col);
+		
+		tmpCol.set(col);
+		tmpCol.a = 0;
+		
+		drawArc(center,rad,rad+feath,segs,col,tmpCol);
+		
+	}
+	
+	public void drawArc(Vector2 center, float radInner, float radOuter, int segs, Color innerCol, Color outerCol) {
+		RENDER_TYPE = GL20.GL_TRIANGLE_STRIP;
+		if (idx>0) {
+			flush();
+		}
+
+		for (int i = 0; i < segs+1; i++) {			
+			a.set(CircleLogic.findPos(center, radOuter, i*(360f/segs), 0f));
+			putVertex(a.x,a.y,outerCol);
+			a.set(CircleLogic.findPos(center, radInner, i*(360f/segs), 0f));
+			putVertex(a.x,a.y,innerCol);
+		}
+		
+		flush();
+	}
+	
+	public void drawArc(Vector2 center, float radInner, float radOuter, float fromDeg, float toDeg, int segs, Color innerCol, Color outerCol) {
+		RENDER_TYPE = GL20.GL_TRIANGLE_STRIP;
+		if (idx>0) {
+			flush();
+		}
+		
+		segs = (int) (segs * (toDeg-fromDeg)/360f);
+		float d = (toDeg - fromDeg)/segs;
+		
+		for (int i = 0; i < segs+1; i++) {			
+			a.set(CircleLogic.findPos(center, radOuter, i*(d) + fromDeg, 0f));
+			putVertex(a.x,a.y,outerCol);
+			a.set(CircleLogic.findPos(center, radInner, i*(d) + fromDeg, 0f));
+			putVertex(a.x,a.y,innerCol);
+		}
+		
+		flush();
+	}
+	
+	
 }
