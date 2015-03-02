@@ -72,7 +72,7 @@ public class MyShapeRenderer implements Disposable {
 	Vector2 norm = new Vector2(),feath = new Vector2();
 	Vector2 bL= new Vector2(), bR= new Vector2(), tL= new Vector2(), tR= new Vector2();
 
-	Color tmpCol = new Color();
+	Color tmpCol1 = new Color(), tmpCol2 = new Color();
 	
 	public MyShapeRenderer () {
 		mesh = new Mesh(true, MAX_VERTS, 0, 
@@ -454,10 +454,10 @@ public class MyShapeRenderer implements Disposable {
 		
 		drawCircle(center, rad, segs, col);
 		
-		tmpCol.set(col);
-		tmpCol.a = 0;
+		tmpCol1.set(col);
+		tmpCol1.a = 0;
 		
-		drawArc(center,rad,rad+feath,segs,col,tmpCol);
+		drawArc(center,rad,rad+feath,segs,col,tmpCol1);
 		
 	}
 	
@@ -486,15 +486,50 @@ public class MyShapeRenderer implements Disposable {
 		segs = (int) (segs * (toDeg-fromDeg)/360f);
 		float d = (toDeg - fromDeg)/segs;
 		
-		for (int i = 0; i < segs+1; i++) {			
-			a.set(CircleLogic.findPos(center, radOuter, i*(d) + fromDeg, 0f));
-			putVertex(a.x,a.y,outerCol);
-			a.set(CircleLogic.findPos(center, radInner, i*(d) + fromDeg, 0f));
-			putVertex(a.x,a.y,innerCol);
+		
+		for (int i = 0; i < segs+1; i++) {
+			if (i ==0 || i == (segs+1)) { // set the alpha to 0 for nice smooth starts and ends.
+				tmpCol1.set(outerCol);
+				tmpCol1.a = 0;
+				a.set(CircleLogic.findPos(center, radOuter, i*(d) + fromDeg, 0f));
+				putVertex(a.x,a.y,tmpCol1);
+				
+				tmpCol1.set(innerCol);
+				tmpCol1.a = 0;
+				a.set(CircleLogic.findPos(center, radInner, i*(d) + fromDeg, 0f));
+				putVertex(a.x,a.y,tmpCol1);
+			} else {
+				a.set(CircleLogic.findPos(center, radOuter, i*(d) + fromDeg, 0f));
+				putVertex(a.x,a.y,outerCol);
+				a.set(CircleLogic.findPos(center, radInner, i*(d) + fromDeg, 0f));
+				putVertex(a.x,a.y,innerCol);
+			}
 		}
 		
 		flush();
 	}
 	
+	public void drawArc(Vector2 center, float radInner, float radOuter, float fromDeg, float toDeg, int segs, float feath, Color col) {
+		RENDER_TYPE = GL20.GL_TRIANGLE_STRIP;
+		if (idx>0) {
+			flush();
+		}
+		
+		tmpCol1.set(col);
+		tmpCol1.a = 0;
+		
+		// Draw an center bit.
+		drawArc(center,radInner,radOuter,fromDeg,toDeg,segs,col, col);
+
+		// Draw outer bit
+		drawArc(center,radOuter,radOuter+feath,fromDeg,toDeg,segs,col, tmpCol1);
+
+		// Draw inner bit
+		drawArc(center,radInner-feath,radInner,fromDeg,toDeg,segs,tmpCol1, col);
+
+		
+		
+		flush();
+	}
 	
 }
