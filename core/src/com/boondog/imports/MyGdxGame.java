@@ -40,8 +40,9 @@ public class MyGdxGame extends ApplicationAdapter {
 		
 		a.set(worldWidth/2,worldHeight/2);
 	
-		rend.drawCircle(a,20f,20f,20, Color.WHITE);
-		rend.drawArc(a, 50, 100,0,45, 100, Color.GREEN, Color.BLUE);
+//		rend.drawCircle(a,20f,20f,20, Color.WHITE);
+	//	rend.drawArc(a, 50, 100,0,45, 100, Color.GREEN, Color.BLUE);
+		rend.drawArc(a, 50, 100,0,45, 100, 10f, Color.GREEN);
 
 	}
 }

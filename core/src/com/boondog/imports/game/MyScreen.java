@@ -2,6 +2,7 @@ package com.boondog.imports.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -109,6 +110,15 @@ public abstract class MyScreen extends Group implements Screen  {
 		inputs = new InputMultiplexer();
 		inputs.addProcessor(stage);
 		inputs.addProcessor(new DebugInputProcessor(this));
+		Gdx.input.setInputProcessor(inputs);
+	}
+	
+	public void addInputProcessor(InputProcessor input) {
+		if (inputs == null) {
+			inputs = new InputMultiplexer();
+			inputs.addProcessor(stage);
+		}
+		inputs.addProcessor(input);
 		Gdx.input.setInputProcessor(inputs);
 	}
 }
