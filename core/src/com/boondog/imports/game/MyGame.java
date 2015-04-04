@@ -74,4 +74,5 @@ public abstract class MyGame extends Game {
 	public static Stage getStage() {
 		return stage;
 	}
+	
 }

@@ -1,17 +1,19 @@
-package com.boondog.imports.misc;
+package com.boondog.imports.math;
 
 import java.util.HashMap;
 
+import com.badlogic.gdx.utils.TimeUtils;
 
-public class Timer {
-	// The data types these return are important. 
-	// http://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html
-	
-	// int = 32 bit integer.
-	// long = 64 bit integer
-	// float = 32 bit float
-	// double = 64 bit float
-	
+
+/**
+ * 
+ * A very simple timer class.
+ * 
+ * @author george
+ *
+ */
+
+public class Timer {	
 	int nTimers;
 	long timers[];
 	HashMap<String, Long> timersMap;
@@ -41,11 +43,11 @@ public class Timer {
 	}
 	
 	public long getNanoTime(int i) {
-		return System.nanoTime()-timers[i];
+		return TimeUtils.nanoTime()-timers[i];
 	}
 	
 	public long getNanoTime(String s) {
-		return System.nanoTime()-timersMap.get(s);
+		return TimeUtils.nanoTime()-timersMap.get(s);
 	}
 	
 	public double getMilliTime(int i) {
@@ -65,12 +67,12 @@ public class Timer {
 	}
 	
 	public void reset(int i) {
-		timers[i] = System.nanoTime();
+		timers[i] = TimeUtils.nanoTime();
 	}
 	
 	public void reset(String s) {
 		// Java docs says old item is replaced, so this shouldn't lead to duplicates
-		timersMap.put(s, System.nanoTime());
+		timersMap.put(s, TimeUtils.nanoTime());
 	}
 
 }
