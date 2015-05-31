@@ -1,4 +1,4 @@
-package com.boondog.imports.math;
+package com.boondog.imports.misc;
 
 import java.util.HashMap;
 

@@ -63,7 +63,7 @@ public class Assets {
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(baseDir + fontName));
 		FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 		parameter.genMipMaps = true;
-		parameter.minFilter = TextureFilter.Linear;
+		parameter.minFilter = TextureFilter.MipMapLinearNearest;
 		parameter.magFilter = TextureFilter.Linear;
 		
 		// Make them too big, then minify. This helps for some reason...

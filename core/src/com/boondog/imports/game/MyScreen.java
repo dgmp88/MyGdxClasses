@@ -121,4 +121,8 @@ public abstract class MyScreen extends Group implements Screen  {
 		inputs.addProcessor(input);
 		Gdx.input.setInputProcessor(inputs);
 	}
+	
+	public InputMultiplexer getInputMultiplexer() {
+		return inputs;
+	}
 }

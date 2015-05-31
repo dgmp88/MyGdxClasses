@@ -32,13 +32,6 @@ public class MyShapeRenderer implements Disposable {
 	Camera cam;
 	ShaderProgram shader;
 	
-	enum LineType {
-		top,
-		bottom,
-		center
-	}
-	
-	
 	//Position attribute - (x, y) 
 	public static final int POSITION_COMPONENTS = 2;
 	
@@ -49,10 +42,11 @@ public class MyShapeRenderer implements Disposable {
 	public static final int NUM_COMPONENTS = POSITION_COMPONENTS + COLOR_COMPONENTS;
 		
 	//The maximum number of vertices our mesh will hold
-	public static int MAX_VERTS = 5000; // We define the first square with 4 points, then 2 each for the next two
+	public static int MAX_VERTS = 50000;
 	
 	public static int RENDER_TYPE;
 	
+	private int n_verts;
 	
 	//The array which holds all the data, interleaved like so:
 	//    x, y, r, g, b, a
@@ -72,7 +66,7 @@ public class MyShapeRenderer implements Disposable {
 	Vector2 norm = new Vector2(),feath = new Vector2();
 	Vector2 bL= new Vector2(), bR= new Vector2(), tL= new Vector2(), tR= new Vector2();
 
-	Color tmpCol1 = new Color(), tmpCol2 = new Color();
+	Color tmpCol1 = new Color(), tmpCol2 = new Color(), zeroAlpha = new Color();
 	
 	public MyShapeRenderer () {
 		mesh = new Mesh(true, MAX_VERTS, 0, 
@@ -85,8 +79,6 @@ public class MyShapeRenderer implements Disposable {
 	public void setCamera(Camera cam) {
 		this.cam = cam;
 	}
-	
-	
 	
 	protected static ShaderProgram createMeshShader() {
 		
@@ -119,11 +111,10 @@ public class MyShapeRenderer implements Disposable {
 		return shader;
 	}
 
-	void flush() {
+	public void flush() {
 		//if we've already flushed
 		if (idx==0)
 			return;
-		
 		//sends our vertex data to the mesh
 		mesh.setVertices(verts);
 		
@@ -160,167 +151,6 @@ public class MyShapeRenderer implements Disposable {
 		Arrays.fill(verts, 0);
 	}
 	
-	/** 
-	 * Draw lines from points[0] -> points[1], points[1] -> points[2] ... points[n-1] -> points[n]
-	 * 
-	 * @param points
-	 * @param width
-	 * @param color
-	 */
-	public void drawLines(Array<Vector2> points, float width, Color color) {
-		float feather = 0.3f * width;
-		width = width - (feather);
-		for (int i = 0; i < points.size - 1; i ++) {
-			drawFullLine(points.get(i), points.get(i+1),width,feather,color);
-		}
-		flush();
-	}
-	
-	public void drawLine(Vector2 a, Vector2 b, float width, Color color) {
-		float feather = 0.3f * width;
-		width = width - (feather);
-		drawFullLine(a, b,width,feather,color);
-		flush();
-	}
-	
-	
-	public void drawLines(Array<Vector2> points, float width, float feather, Color color) {
-		for (int i = 0; i < points.size - 1; i ++) {
-			drawFullLine(points.get(i), points.get(i+1),width,feather,color);
-		}
-		flush();
-	}
-	
-	public void drawLine(Vector2 a, Vector2 b, float width, float feather, Color color) {
-		drawFullLine(a, b,width,feather,color);
-		flush();
-	}
-	
-	private void drawFullLine(Vector2 a, Vector2 b, float width, float feather, Color color) {
-		RENDER_TYPE = GL20.GL_TRIANGLE_STRIP;
-
-		// Calculate the normal that defines the center rectangle
-		norm.set(b);
-		norm.sub(a);
-		norm.rotate(90);
-		norm.setLength(width/2); // Scale to line width
-				
-		// Calculate the normal that defines feathering
-		feath.set(norm);
-		feath.setLength(feather/2);
-
-		// ORDER OF RENDERING
-		
-		
-		// 1                    2
-				//top feather
-		// 3                    4
-	
-				// center
-		
-		// 5                    6
-				//bottom feather
-		// 7                    8
-		
-		
-		// Top feather 
-		tL.set(a).add(norm).add(feath);
-		tR.set(b).add(norm).add(feath);
-		bL.set(a).add(norm);
-		bR.set(b).add(norm);
-		
-		// Draw it
-		// The first triangle  (1-2-3)
-		putVertex(tL,0, color);
-		putVertex(tR,0, color);
-		putVertex(bL,1, color);
-		
-		// The second triangle (2-3-4);
-		putVertex(bR,1, color);
-
-		// Center line 
-		bL.set(a).sub(norm);
-		bR.set(b).sub(norm);
-		
-		// Draw it
-		putVertex(bL,1, color);// 3-4-5
-		putVertex(bR,1, color);
-
-		// Bottom feather 
-		bL.set(a).sub(norm).sub(feath);
-		bR.set(b).sub(norm).sub(feath);
-		
-		// Draw it
-		putVertex(bL,0, color);
-		putVertex(bR,0, color);
-	}
-	
-	
-	public void drawTriangle(Vector2 a, Vector2 b, Vector2 c, Color color) {
-		
-		RENDER_TYPE = GL20.GL_TRIANGLES;
-
-		// Draw it
-		// The first triangle  (1-2-3)
-		putVertex(a,1, color);
-		putVertex(b,1, color);
-		putVertex(c,1, color);
-		
-		flush();
-	}
-	
-	public void drawTriangleFeathered(Vector2 a, Vector2 b, Vector2 c, Color color, float feather) {
-		
-		RENDER_TYPE = GL20.GL_TRIANGLE_FAN;
-
-		
-		// a, b, c = outer points 
-		// ai, bi, ci = inner points
-		
-		Vector2 ai, bi, ci;
-		Vector2 ab, bc, ca; 
-		
-		ab = b.cpy().sub(a).rotate(90);
-		bc = c.cpy().sub(b).rotate(90);
-		ca = a.cpy().sub(c).rotate(90);
-		
-		ab.scl((1/ab.len())*feather);
-		bc.scl((1/bc.len())*feather);
-		ca.scl((1/ca.len())*feather);
-		
-		
-		ai = a.cpy().sub(ab);
-		ai.sub(ca);
-		
-		bi = b.cpy().sub(ab);
-		bi.sub(bc);
-		
-		ci = c.cpy().sub(ca);
-		ci.sub(bc);
-
-		drawTriangle(a,b,c,color);
-	//	drawTriangle(ai,bi,ci,Color.RED);
-
-		flush();
-	}
-	
-	private void putVertex(Vector2 v1, 
-			float a1, 
-			Color color) {
-		if (idx>verts.length - 6) {
-			flush();
-		}
-
-		// v1
-		verts[idx++] = v1.x;
-		verts[idx++] = v1.y;
-		verts[idx++] = color.r; 	//Color(r, g, b, a)
-		verts[idx++] = color.g;
-		verts[idx++] = color.b;
-		verts[idx++] = a1;
-			
-	}
-	
 	private void putVertex(float x, float y, 
 			Color color) {
 		if (idx>verts.length - 6) {
@@ -343,56 +173,50 @@ public class MyShapeRenderer implements Disposable {
 		shader.dispose();
 	}
 
-
-
-	public void emptyRect(float x, float y, float w, float h, Color color, float lineWidth) {
-		// Draw a rectangle.
-		
-		// NOTE: the diagram below accurately depicts edging on the lines to stop odd looking rectangles
-		// side lines are shorter than they should be, top/bottoms are longer
-		///  h	----- 1 -----
-		/// 	|			|
-		/// 	2			3		
-		/// 	|			|
-		///  xy ---- 4 -----w
-		
-		drawLine(new Vector2(x-lineWidth/2,y+h), new Vector2(x+w+lineWidth/2,y+h), lineWidth, color);
-		drawLine(new Vector2(x,y), new Vector2(x,y+h), lineWidth, color);
-		drawLine(new Vector2(x+w,y), new Vector2(x+w,y+h), lineWidth, color);
-		drawLine(new Vector2(x-lineWidth/2,y), new Vector2(x+w+lineWidth/2,y), lineWidth, color);
+	
+	private void uncheckedTriangle(float aX, float aY, float bX, float bY, float cX, float cY, 
+			Color aC, Color bC, Color cC) {
+		putVertex(aX, aY, aC);
+		putVertex(bX, bY, bC);
+		putVertex(cX, cY, cC);
 	}
 
-
-
+	public void fillTriangle(float aX, float aY, float bX, float bY, float cX, float cY, 
+			Color aC, Color bC, Color cC) {
+		setType(GL20.GL_TRIANGLES);
+		checkMaxVerts(3);
+		putVertex(aX, aY, aC);
+		putVertex(bX, bY, bC);
+		putVertex(cX, cY, cC);
+	}
+	
+	private void uncheckedRect(float x0, float y0, float x1, float y1,
+			Color bottomLeft,
+			Color bottomRight,
+			Color topLeft, 
+			Color topRight
+			) {
+		uncheckedTriangle(x0, y0, x0+x1, y0, x0, y0+y1, bottomLeft, bottomRight, topLeft);
+		uncheckedTriangle(x0+x1, y0, x0, y0+y1, x0+x1, y0+y1, bottomRight, topLeft, topRight);
+	}
+	
 	public void fillRect(float x0, float y0, float x1, float y1,
 			Color bottomLeft,
 			Color bottomRight,
 			Color topLeft, 
 			Color topRight
-			) {		
-		RENDER_TYPE = GL20.GL_TRIANGLE_STRIP;
-		if (idx > 0) {
-			flush();
-		}
-		putVertex(x0,y0,bottomLeft);
-		putVertex(x0+x1,y0,bottomRight);
-		putVertex(x0,y0+y1,topLeft);
-		putVertex(x0+x1,y0+y1,topRight);
-		flush();
+			) {
+		setType(GL20.GL_TRIANGLES);
+		checkMaxVerts(6);
+		uncheckedRect(x0, y0, x1, y1, bottomLeft, bottomRight, topLeft, topRight);
 	}
-
+	
+	
 	public void fillRect(float x0, float y0, float x1, float y1,
 			Color color
-			) {		
-		RENDER_TYPE = GL20.GL_TRIANGLE_STRIP;
-		if (idx > 0) {
-			flush();
-		}
-		putVertex(x0,y0,color);
-		putVertex(x0+x1,y0,color);
-		putVertex(x0,y0+y1,color);
-		putVertex(x0+x1,y0+y1,color);
-		flush();
+			) {
+		
+		fillRect(x0, y0, x1, y1, color, color, color, color);
 	}
 	
 	
@@ -423,24 +247,139 @@ public class MyShapeRenderer implements Disposable {
 		c.sub(dir.scl(-width*0.2f));
 		drawLine(c,left,width,feather,color);
 		drawLine(c,right,width,feather,color);
-		flush();
 	}
 
+
+	public void drawLine(Vector2 a, Vector2 b, float width, float feather,
+			Color color) {
+		drawFullLine(a, b,width,feather,color);
+	}
+	
+	public void drawLine(float x1, float y1, float x2, float y2, float width, float feather,
+			Color color) {
+		a.set(x1, y1);
+		b.set(x2, y2);
+		drawFullLine(a, b,width,feather,color);
+	}
+
+	public void drawLines(Array<Vector2> points, float width, float feather,
+			Color color) {
+		for (int i = 0; i < points.size - 1; i ++) {
+			drawFullLine(points.get(i), points.get(i+1),width,feather, color);
+		}		
+	}
+	
+	
+	private void drawFeatheredFullLine(Vector2 a, Vector2 b, float width, float feather, Color color) {
+		checkMaxVerts(3*6);
+
+		// Calculate the normal that defines the center rectangle
+		norm.set(b);
+		norm.sub(a);
+		norm.rotate(90);
+		norm.setLength(width/2); // Scale to line width
+				
+		// Calculate the normal that defines feathering
+		feath.set(norm);
+		feath.setLength(feather/2);
+		
+		zeroAlpha.set(color);
+		zeroAlpha.a = 0;
+
+		// ORDER OF RENDERING
+		
+		
+		// 1                    2
+				//top feather
+		// 3                    4
+	
+				// center
+		
+		// 5                    6
+				//bottom feather
+		// 7                    8
+		
+		
+		// Top feather 
+		tL.set(a).add(norm).add(feath);
+		tR.set(b).add(norm).add(feath);
+		bL.set(a).add(norm);
+		bR.set(b).add(norm);
+		
+		
+		// Draw it
+		// Top feather  (1-2-3)
+		uncheckedTriangle(tL.x, tL.y, tR.x, tR.y, bL.x, bL.y, zeroAlpha, zeroAlpha, color);
+		uncheckedTriangle(tR.x, tR.y, bL.x, bL.y, bR.x, bR.y, zeroAlpha, color, color);
+
+		// Center line 
+		tL.set(a).add(norm);
+		tR.set(b).add(norm);
+		bL.set(a).sub(norm);
+		bR.set(b).sub(norm);
+		
+		// Draw it
+		uncheckedTriangle(tL.x, tL.y, tR.x, tR.y, bL.x, bL.y, color, color, color);
+		uncheckedTriangle(tR.x, tR.y, bL.x, bL.y, bR.x, bR.y, color, color, color);
+
+
+		// Bottom feather 
+		tL.set(a).sub(norm);
+		tR.set(b).sub(norm);
+		bL.set(a).sub(norm).sub(feath);
+		bR.set(b).sub(norm).sub(feath);
+		
+		// Draw it
+		uncheckedTriangle(tL.x, tL.y, tR.x, tR.y, bL.x, bL.y, color, color, zeroAlpha);
+		uncheckedTriangle(tR.x, tR.y, bL.x, bL.y, bR.x, bR.y, color, zeroAlpha, zeroAlpha);
+	}
+	
+	
+	private void drawFullLine(Vector2 a, Vector2 b, float width, float feather, Color color) {
+		setType(GL20.GL_TRIANGLES);			
+		if (feather > 0) {
+			drawFeatheredFullLine(a, b, width, feather, color);
+		} else {
+			 drawLine(a, b, width, color);
+		}
+	}
+	
+	public void drawLine(Vector2 a, Vector2 b, float width, Color color) {
+		// Calculate the normal that defines the center rectangle
+		norm.set(b);
+		norm.sub(a);
+		norm.rotate(90);
+		norm.setLength(width/2); // Scale to line width
+		
+		// 1                    2
+				//top feather
+		// 3                    4
+
+		// Top feather 
+		tL.set(a).add(norm);
+		tR.set(b).add(norm);
+		bL.set(a).sub(norm);
+		bR.set(b).sub(norm);
+		
+		uncheckedTriangle(tL.x, tL.y, tR.x, tR.y, bL.x, bL.y, color, color, color);
+		uncheckedTriangle(tR.x, tR.y, bL.x, bL.y, bR.x, bR.y, color, color, color);
+
+		
+	}
+	
+
+	public void drawCircle(float x, float y, float rad, int segs,
+			Color col) {
+		a.set(x,y);
+		drawCircle(a, rad, segs, col);
+	}
+	
 
 	public void drawCircle(Vector2 center, float rad, int segs, Color col) {
 		if (segs < 3) {
 			throw new IllegalArgumentException("Segs must be > 3");
 		}
-		RENDER_TYPE = GL20.GL_TRIANGLE_FAN;
-		if (idx>0) {
-			flush();
-		}
-		putVertex(center.x,center.y,col);
-		for (int i = 0; i < segs+1; i++) {
-			a.set(CircleLogic.findPos(center, rad, i*(360f/segs), 0f));
-			putVertex(a.x,a.y,col);
-		}
-		flush();
+		drawArc(center, 0.001f, rad, segs, col, col);
 	}
 	
 	public void drawCircle(Vector2 center, float rad, float feath, int segs, Color col) {
@@ -461,34 +400,69 @@ public class MyShapeRenderer implements Disposable {
 		
 	}
 	
-	public void drawArc(Vector2 center, float radInner, float radOuter, int segs, Color innerCol, Color outerCol) {
-		RENDER_TYPE = GL20.GL_TRIANGLE_STRIP;
-		if (idx>0) {
-			flush();
-		}
-
+	/**
+	 * Complete arc
+	 * @param center
+	 * @param radInner
+	 * @param radOuter
+	 * @param segs
+	 * @param innerCol
+	 * @param outerCol
+	 */
+	public void drawArc(Vector2 center, float radInner, float radOuter, int segs, Color innerCol, Color outerCol) {		
+		setType(GL20.GL_TRIANGLE_STRIP);
+		n_verts = (segs+1)*2 + 2;
+		checkMaxVerts(n_verts);
+		a.set(CircleLogic.findPos(center, radOuter, 0*(360f/segs), 0f));
+		putVertex(a.x,a.y,outerCol);
+		putVertex(a.x,a.y,outerCol);
 		for (int i = 0; i < segs+1; i++) {			
 			a.set(CircleLogic.findPos(center, radOuter, i*(360f/segs), 0f));
 			putVertex(a.x,a.y,outerCol);
 			a.set(CircleLogic.findPos(center, radInner, i*(360f/segs), 0f));
 			putVertex(a.x,a.y,innerCol);
-		}
-		
-		flush();
+		}		
+		putVertex(a.x,a.y,innerCol);
 	}
 	
-	public void drawArc(Vector2 center, float radInner, float radOuter, float fromDeg, float toDeg, int segs, Color innerCol, Color outerCol) {
-		RENDER_TYPE = GL20.GL_TRIANGLE_STRIP;
-		if (idx>0) {
+	private void checkMaxVerts(int n_verts) {
+		if (idx+n_verts>=MAX_VERTS) {
 			flush();
-		}
+		}		
+	}
+
+
+	/**
+	 * Everything calls this one. Draw an arc, most specific way.
+	 * @param center
+	 * @param radInner
+	 * @param radOuter
+	 * @param fromDeg
+	 * @param toDeg
+	 * @param segs
+	 * @param innerCol
+	 * @param outerCol
+	 */
+	public void drawPartialArc(Vector2 center, float radInner, float radOuter, float fromDeg, float toDeg, int segs, Color innerCol, Color outerCol) {
+		setType(GL20.GL_TRIANGLE_STRIP);
 		
+		n_verts = (segs+1)*2 + 1;
+		checkMaxVerts(n_verts);
+
 		segs = (int) (segs * (toDeg-fromDeg)/360f);
+		if (segs < 5) { // Otherwise the rounding draws nothing
+			segs = 5;
+		}
 		float d = (toDeg - fromDeg)/segs;
 		
+		tmpCol1.set(outerCol);
+		tmpCol1.a = 0;
+		a.set(CircleLogic.findPos(center, radOuter, fromDeg, 0f));
+		putVertex(a.x,a.y,tmpCol1);
+		putVertex(a.x,a.y,tmpCol1);
 		
 		for (int i = 0; i < segs+1; i++) {
-			if (i ==0 || i == (segs+1)) { // set the alpha to 0 for nice smooth starts and ends.
+			if (toDeg < 359 && i == (segs)) { // set the alpha to 0 for nice smooth starts and ends.
 				tmpCol1.set(outerCol);
 				tmpCol1.a = 0;
 				a.set(CircleLogic.findPos(center, radOuter, i*(d) + fromDeg, 0f));
@@ -505,31 +479,40 @@ public class MyShapeRenderer implements Disposable {
 				putVertex(a.x,a.y,innerCol);
 			}
 		}
-		
-		flush();
+		putVertex(a.x,a.y,innerCol); // Prevent drawing again.
+		putVertex(a.x,a.y,innerCol); // Prevent drawing again.
 	}
 	
-	public void drawArc(Vector2 center, float radInner, float radOuter, float fromDeg, float toDeg, int segs, float feath, Color col) {
-		RENDER_TYPE = GL20.GL_TRIANGLE_STRIP;
-		if (idx>0) {
-			flush();
-		}
-		
+	public void drawSmoothPartialArc(Vector2 center, float radInner, float radOuter, float fromDeg, float toDeg, int segs, float feath, Color col) {
 		tmpCol1.set(col);
 		tmpCol1.a = 0;
 		
 		// Draw an center bit.
-		drawArc(center,radInner,radOuter,fromDeg,toDeg,segs,col, col);
+		drawPartialArc(center,radInner,radOuter,fromDeg,toDeg,segs,col, col);
 
 		// Draw outer bit
-		drawArc(center,radOuter,radOuter+feath,fromDeg,toDeg,segs,col, tmpCol1);
+		drawPartialArc(center,radOuter,radOuter+feath,fromDeg,toDeg,segs,col, tmpCol1);
 
 		// Draw inner bit
-		drawArc(center,radInner-feath,radInner,fromDeg,toDeg,segs,tmpCol1, col);
-
-		
-		
-		flush();
+		drawPartialArc(center,radInner-feath,radInner,fromDeg,toDeg,segs,tmpCol1, col);
 	}
 	
+	private void setType(int type) {
+		if (RENDER_TYPE!=type){
+			flush();
+			RENDER_TYPE = type;
+			begin();
+		}
+		
+	}
+	
+	public void begin() {
+		idx = 0;
+	}
+	
+	public void end() {
+		flush();
+	}
+
+
 }

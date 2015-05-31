@@ -10,11 +10,11 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.boondog.imports.graphics.MyShapeRenderer;
+import com.boondog.imports.graphics.OldSlowMyShapeRenderer;
 
 public class MyGdxGame extends ApplicationAdapter {
 	SpriteBatch batch;
-	MyShapeRenderer rend;
+	OldSlowMyShapeRenderer rend;
 	Texture img;
 	Viewport viewport;
 	float worldWidth = 720, worldHeight = 1080;
@@ -28,7 +28,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		viewport = new StretchViewport(worldWidth,worldHeight);
 		img = new Texture("badlogic.jpg");
-		rend = new MyShapeRenderer();
+		rend = new OldSlowMyShapeRenderer();
 		rend.setCamera(viewport.getCamera());
 	}
 
