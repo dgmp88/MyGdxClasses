@@ -10,11 +10,12 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.boondog.imports.graphics.MyShapeRenderer;
 import com.boondog.imports.graphics.OldSlowMyShapeRenderer;
 
 public class MyGdxGame extends ApplicationAdapter {
 	SpriteBatch batch;
-	OldSlowMyShapeRenderer rend;
+	MyShapeRenderer rend;
 	Texture img;
 	Viewport viewport;
 	float worldWidth = 720, worldHeight = 1080;
@@ -28,7 +29,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		viewport = new StretchViewport(worldWidth,worldHeight);
 		img = new Texture("badlogic.jpg");
-		rend = new OldSlowMyShapeRenderer();
+		rend = new MyShapeRenderer();
 		rend.setCamera(viewport.getCamera());
 	}
 
@@ -42,7 +43,26 @@ public class MyGdxGame extends ApplicationAdapter {
 	
 //		rend.drawCircle(a,20f,20f,20, Color.WHITE);
 	//	rend.drawArc(a, 50, 100,0,45, 100, Color.GREEN, Color.BLUE);
-		rend.drawArc(a, 50, 100,0,45, 100, 10f, Color.GREEN);
+//		rend.drawArc(a, 50, 100,0,45, 100, 10f, Color.GREEN);
+		rend.begin();
 
+		a.set(100, 10);
+		b.set(100, 1000);
+		rend.drawLine(a, b, 100, Color.WHITE);
+		
+		a.set(500, 10);
+		b.set(500, 1000);
+		rend.drawLine(a, b, 100, Color.WHITE);
+		
+		
+		a.set(100, 1000);
+		b.set(1000,100);
+		rend.drawLine(a, b, 100, Color.WHITE);
+		
+		
+//		rend.drawLine(a, b, 50, 10, Color.RED);
+		rend.end();
+		
+		
 	}
 }

@@ -345,6 +345,8 @@ public class MyShapeRenderer implements Disposable {
 	}
 	
 	public void drawLine(Vector2 a, Vector2 b, float width, Color color) {
+		setType(GL20.GL_TRIANGLES);			
+
 		// Calculate the normal that defines the center rectangle
 		norm.set(b);
 		norm.sub(a);
@@ -362,9 +364,7 @@ public class MyShapeRenderer implements Disposable {
 		bR.set(b).sub(norm);
 		
 		uncheckedTriangle(tL.x, tL.y, tR.x, tR.y, bL.x, bL.y, color, color, color);
-		uncheckedTriangle(tR.x, tR.y, bL.x, bL.y, bR.x, bR.y, color, color, color);
-
-		
+		uncheckedTriangle(tR.x, tR.y, bL.x, bL.y, bR.x, bR.y, color, color, color);	
 	}
 	
 
