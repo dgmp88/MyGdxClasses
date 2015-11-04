@@ -367,6 +367,43 @@ public class MyShapeRenderer implements Disposable {
 		uncheckedTriangle(tR.x, tR.y, bL.x, bL.y, bR.x, bR.y, color, color, color);	
 	}
 	
+	public void drawLineShapePart(Vector2 center, int verts, float innerPos, float outerPos, float rotation, Color innerCol, Color outerCol) {
+		setType(GL20.GL_TRIANGLE_STRIP);			
+		
+		n_verts = (verts+1)*2 + 2;
+		checkMaxVerts(n_verts);		
+						
+		a.set(CircleLogic.findPos(center, innerPos, 0*(360f/verts)+rotation, 0f));
+		
+		// We place the vertex twice at the start and at the end to ensure no crosover from the last shape
+		putVertex(a.x,a.y,innerCol);
+		putVertex(a.x,a.y,innerCol);
+		for (int i = 0; i < verts+1; i++) {			
+			a.set(CircleLogic.findPos(center, outerPos, i*(360f/verts)+rotation, 0f));
+			putVertex(a.x,a.y,outerCol);
+			a.set(CircleLogic.findPos(center, innerPos, i*(360f/verts)+rotation, 0f));
+			putVertex(a.x,a.y,innerCol);
+		}		
+		putVertex(a.x,a.y,innerCol);		
+	}
+	
+	public void drawLineShape(Vector2 center, int verts, float size, float lineWidth, float fadeWidth, float rotation, Color color) {
+		setType(GL20.GL_TRIANGLE_STRIP);			
+		
+		zeroAlpha.set(color);
+		zeroAlpha.a = 0f;
+		
+		float innerPos = size - lineWidth/2f, outerPos = size + lineWidth/2f;
+		drawLineShapePart(center, verts, innerPos, outerPos, rotation, color, color);
+		
+		
+		float innerFadePosInner = innerPos - fadeWidth, innerFadePosOuter = innerPos;
+		drawLineShapePart(center, verts, innerFadePosInner, innerFadePosOuter, rotation, zeroAlpha, color);
+		
+		float outerFadePosInner = outerPos, outerFadePosOuter = outerPos + fadeWidth;
+		drawLineShapePart(center, verts, outerFadePosInner, outerFadePosOuter, rotation, color, zeroAlpha);
+	}
+		
 
 	public void drawCircle(float x, float y, float rad, int segs,
 			Color col) {
